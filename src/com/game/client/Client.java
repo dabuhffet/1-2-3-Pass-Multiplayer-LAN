@@ -1,15 +1,19 @@
 package com.game.client;
 
 import javax.swing.*;
+import javax.swing.border.Border;
+import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseEvent;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class Client extends Thread {
     private boolean isConnected = false;
     private int queuedCard = 1;
+    private ArrayList<String> cards;
     private String playerId = "";
     private PrintWriter sender;
     private Scanner receiver;
@@ -21,18 +25,22 @@ public class Client extends Thread {
     public void initComponents () {
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         frame.setTitle("1-2-3 Pass!");
-        frame.setBackground(new java.awt.Color(37, 40, 47));
+        frame.setBackground(new Color(10, 10, 10));
+        frame.setPreferredSize(new Dimension(800,490));
+        frame.setResizable(false);
 
-        jLayeredPane1.setBackground(new java.awt.Color(30, 40, 47));
-        jLayeredPane1.setForeground(new java.awt.Color(30, 40, 47));
+        jLayeredPane1.setBackground(new Color(30, 40, 47));
+        jLayeredPane1.setForeground(new Color(30, 40, 47));
 
-        gamePanel.setBackground(new java.awt.Color(255, 236, 177));
+        gamePanel.setBackground(new Color(10, 10, 10));
 
-        leaderboardPanel.setBackground(new java.awt.Color(37, 40, 47));
+        leaderboardPanel.setBorder(new LineBorder(new Color(255,255,255), 2));
+        leaderboardPanel.setBackground(new java.awt.Color(10, 10, 10));
+        leaderboardPanel.setBorder(new LineBorder(new Color(255,255,255), 2));
 
-        jLabel4.setFont(new java.awt.Font("Ubuntu", 0, 18)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(254, 254, 254));
         jLabel4.setText("LEADERBOARD");
+        jLabel4.setFont(new Font("Consolas", 0, 20));
+        jLabel4.setForeground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout leaderboardPanelLayout = new javax.swing.GroupLayout(leaderboardPanel);
         leaderboardPanel.setLayout(leaderboardPanelLayout);
@@ -50,11 +58,12 @@ public class Client extends Thread {
                                 .addComponent(jLabel4)
                                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
-        passPanel.setBackground(new java.awt.Color(10, 26, 81));
-        passingCardText.setBackground(new java.awt.Color(255, 255, 255));
-        passingCardText.setFont(new java.awt.Font("Ubuntu", 0, 48)); // NOI18N
-        passingCardText.setForeground(new java.awt.Color(255, 255, 255));
-        passingCardText.setText("                ...");
+        passPanel.setBackground(new Color(10, 10, 10));
+        passPanel.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255),3));
+        passingCardText.setBackground(new Color(255, 255, 255));
+        passingCardText.setFont(new Font("Consolas", 0, 36));
+        passingCardText.setForeground(new Color(255, 255, 255));
+        passingCardText.setText("        ...        ");
 
         javax.swing.GroupLayout passPanelLayout = new javax.swing.GroupLayout(passPanel);
         passPanel.setLayout(passPanelLayout);
@@ -74,13 +83,12 @@ public class Client extends Thread {
         );
 
         card1.setBackground(new java.awt.Color(255, 255, 255));
-        card1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 2));
 
         javax.swing.GroupLayout card1Layout = new javax.swing.GroupLayout(card1);
         card1.setLayout(card1Layout);
         card1Layout.setHorizontalGroup(
                 card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 109, Short.MAX_VALUE)
+                        .addGap(0, 101, Short.MAX_VALUE)
         );
         card1Layout.setVerticalGroup(
                 card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -93,7 +101,7 @@ public class Client extends Thread {
         card3.setLayout(card3Layout);
         card3Layout.setHorizontalGroup(
                 card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 109, Short.MAX_VALUE)
+                        .addGap(0, 101, Short.MAX_VALUE)
         );
         card3Layout.setVerticalGroup(
                 card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -106,7 +114,7 @@ public class Client extends Thread {
         card4.setLayout(card4Layout);
         card4Layout.setHorizontalGroup(
                 card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 109, Short.MAX_VALUE)
+                        .addGap(0, 101, Short.MAX_VALUE)
         );
         card4Layout.setVerticalGroup(
                 card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -115,21 +123,20 @@ public class Client extends Thread {
 
         card2.setBackground(new java.awt.Color(255, 255, 255));
 
-
         javax.swing.GroupLayout card2Layout = new javax.swing.GroupLayout(card2);
         card2.setLayout(card2Layout);
         card2Layout.setHorizontalGroup(
                 card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGap(0, 109, Short.MAX_VALUE)
+                        .addGap(0, 101, Short.MAX_VALUE)
         );
         card2Layout.setVerticalGroup(
                 card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 155, Short.MAX_VALUE)
         );
 
-        playerNameText.setFont(new java.awt.Font("Ubuntu", 1, 18)); // NOI18N
-        playerNameText.setForeground(new java.awt.Color(10, 26, 81));
-        playerNameText.setText("PLAYER");
+        playerNameText.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
+        playerNameText.setForeground(new java.awt.Color(255, 255, 255));
+        playerNameText.setText("Connecting to server...");
 
         javax.swing.GroupLayout gamePanelLayout = new javax.swing.GroupLayout(gamePanel);
         gamePanel.setLayout(gamePanelLayout);
@@ -163,8 +170,8 @@ public class Client extends Thread {
                                 .addComponent(passPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                 .addGap(36, 36, 36)
                                 .addGroup(gamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                        .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(card4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                        .addComponent(card3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(card2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                         .addComponent(card1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
@@ -232,19 +239,40 @@ public class Client extends Thread {
         frame.pack();
     }
 
+    private void removeCardBorder () {
+        card1.setBorder(null);
+        card2.setBorder(null);
+        card3.setBorder(null);
+        card4.setBorder(null);
+    }
+    private void setBorder (JPanel card) {
+        Border insideBorder = BorderFactory.createMatteBorder(0,3,0,3, new Color(0,0,0));
+        Border outsideBorder = BorderFactory.createMatteBorder(0,3,0,3, new Color(255,255,255));
+        card.setBorder(BorderFactory.createCompoundBorder(outsideBorder, insideBorder));
+    }
+
     private void card4Clicked(MouseEvent evt) {
+        this.queuedCard = 4;
+        this.removeCardBorder();
+        this.setBorder(card4);
     }
 
     private void card3Clicked(MouseEvent evt) {
+        this.queuedCard = 3;
+        this.removeCardBorder();
+        this.setBorder(card3);
     }
 
     private void card2Clicked(MouseEvent evt) {
+        this.queuedCard = 2;
+        this.removeCardBorder();
+        this.setBorder(card2);
     }
 
     private void card1Clicked(MouseEvent evt) {
-        System.out.println("Clicked!");
-
-        sender.println("01:02:23");
+        this.queuedCard = 1;
+        this.removeCardBorder();
+        this.setBorder(card1);
     }
 
     public void run() {
@@ -270,16 +298,14 @@ public class Client extends Thread {
         String ip = serverIp.getText();
         int port = Integer.parseInt(serverPort.getText());
 
-        System.out.println("Connecting to " + ip + " on port " + port);
-
         try (Socket socket = new Socket(ip, port)) {
 
             this.isConnected = true;
             connectPanel.setVisible(false);
             System.out.println("Just connected to " + socket.getRemoteSocketAddress());
 
-            receiver = new Scanner(socket.getInputStream());
-            sender = new PrintWriter(socket.getOutputStream(), true);
+            this.receiver = new Scanner(socket.getInputStream());
+            this.sender = new PrintWriter(socket.getOutputStream(), true);
 
             while(receiver.hasNextLine()) {
                 String packet = receiver.nextLine();
@@ -289,17 +315,63 @@ public class Client extends Thread {
                 String playerId  = code[1];
                 String cardCode = code[2];
 
-                System.out.println("CODE: " + packetType + "-" + playerId + "-" + cardCode);
+                //System.out.println("CODE: " + packetType + "-" + playerId + "-" + cardCode);
 
                 switch(packetType) {
                     // READY PACKET
                     case "00" :
+                        // If playerId has been set, packets are about the cards
+                        if (this.playerId.length() > 0) {
+                            System.out.println("Card received... [" + cardCode + "]");
+                            cards.add(cardCode);
+                            cards.get(cards.size() - 1);
 
+                            // TODO: Set labels for the cards
+                        }
+                        else {
+                            // Initialize player information
+                            this.playerId = playerId;
+                            this.playerNameText.setText("PLAYER " + playerId + " | Connected on " + socket.getRemoteSocketAddress());
+                            this.passingCardText.setText("  WAITING TO START  ");
+
+                            // Set initial picked card
+                            this.queuedCard = 1;
+                            this.setBorder(card1);
+
+                            if (this.playerId.matches("01")) {
+                                JOptionPane.showMessageDialog(frame, "Would you like to start the game now?");
+
+                                // Send start game signal packet.
+                                System.out.println("Sending start signal packet...");
+                                this.sender.println("01:01:00");
+
+                                this.passingCardText.setText("        START       ");
+                            }
+                        }
                         break;
 
                     // START/COUNT PACKET
                     case "01" :
-
+                        if (cardCode.matches("00")) {
+                            this.passingCardText.setText("        PASS!       ");
+                            // TODO: Insert pass code here.
+                            // sender.println("02:" + this.playerId + ":" + cards[queuedCard]);
+                        }
+                        else if (cardCode.matches("01")) {
+                            this.passingCardText.setText("          1         ");
+                        }
+                        else if (cardCode.matches("02")) {
+                            this.passingCardText.setText("          2         ");
+                        }
+                        else if (cardCode.matches("03")) {
+                            this.passingCardText.setText("          3         ");
+                        }
+                        else if (cardCode.matches("04"))  {
+                            this.passingCardText.setText("        START       ");
+                        }
+                        else {
+                            this.passingCardText.setText("        ERROR       ");
+                        }
                         break;
 
                     // PASS PACKET

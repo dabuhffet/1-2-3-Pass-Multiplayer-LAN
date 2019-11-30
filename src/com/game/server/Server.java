@@ -1,19 +1,33 @@
 package com.game.server;
 
+import javax.swing.*;
+import java.awt.*;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Hashtable;
 import java.util.Scanner;
 
 public class Server extends Thread{
 
     private ServerSocket serverSocket;
-    private PrintWriter sender;
+    private Hashtable <String, PrintWriter> senders;
     private Scanner receiver;
 
     public Server (int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
+        this.senders = new Hashtable<String, PrintWriter>();
+    }
+
+    public void broadcast (String message) {
+        senders.forEach((key, value) -> {
+            value.println(message);
+        });
+    }
+
+    public void send (String clientId, String message) {
+        senders.get(clientId).println(message);
     }
 
     public void run() {
@@ -24,7 +38,18 @@ public class Server extends Thread{
                 System.out.println("Just connected to " + client.getRemoteSocketAddress());
 
                 receiver = new Scanner(client.getInputStream());
-                sender = new PrintWriter(client.getOutputStream(), true);
+
+                PrintWriter sender = new PrintWriter(client.getOutputStream(), true);
+
+                // Generate ID of this client
+                String id = String.format("%02d", (senders.size() + 1));
+
+                // Add sender of client to the pool of sender with its id as the key.
+                //      This is used to track the clients connected to the server.
+                senders.put(id, sender);
+
+                // Send generated id to the client
+                send(id, "00:" + id + ":00");
 
                 while (receiver.hasNextLine()) {
                     String packet = receiver.nextLine();
@@ -38,13 +63,27 @@ public class Server extends Thread{
 
                     switch (packetType) {
                         // READY PACKET
-                        case "00":
-
+                        case "00" :
                             break;
 
                         // START/COUNT PACKET
                         case "01":
+                            if (playerId.matches("01")) {
+                                // TODO: Insert code here for generating/randomizing cards and distributing them to clients
 
+                                this.broadcast("01:00:04");
+                                System.out.println("Starting game...");
+
+                                for (int i = 3; i > 0; i--) {
+                                    this.broadcast("01:00:0" + i);
+                                    System.out.println("Counting... " + i);
+                                    Thread.sleep(1000);
+                                }
+                                this.broadcast("01:00:00");
+                                System.out.println("Pass...");
+
+                                // TODO: Insert here handling end game passing
+                            }
                             break;
 
                         // PASS PACKET
@@ -66,8 +105,22 @@ public class Server extends Thread{
 
     public static void main(String[] args) {
         try {
-            int port = 8081;
-            Thread t = new Server(port);
+            // Creates a Dialog Box to get the port to use
+            JFrame frame = new JFrame();
+            JPanel panel = new JPanel(new BorderLayout(5, 5));
+
+            JPanel label = new JPanel(new GridLayout(0, 1, 2, 2));
+            label.add(new JLabel("Server IP:", SwingConstants.RIGHT));
+            panel.add(label, BorderLayout.WEST);
+
+            JPanel controls = new JPanel(new GridLayout(0, 1, 2, 2));
+            JTextField serverIp = new JTextField();
+            controls.add(serverIp);
+            panel.add(controls, BorderLayout.CENTER);
+
+            JOptionPane.showMessageDialog(frame, panel, "Connection Information", JOptionPane.OK_CANCEL_OPTION);
+
+            Thread t = new Server(Integer.parseInt(serverIp.getText()));
             t.start();
         }
         catch (IOException e) {
