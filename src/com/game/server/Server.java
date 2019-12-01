@@ -2,18 +2,22 @@ package com.game.server;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.List;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Hashtable;
-import java.util.Scanner;
+import java.util.*;
 
 public class Server extends Thread{
 
     private ServerSocket serverSocket;
     private Hashtable <String, PrintWriter> senders;
+    private Hashtable<String, ArrayList<String>> hands = new Hashtable<String, ArrayList<String>>();
     private Scanner receiver;
+    private String cardArray[] = {"A","2","3","4","5","6","7","8","9","0","J","Q","K"};
+    private String suitsArray[] = {"D","H","S","C"};
+    private int numOfPlayers;
 
     public Server (int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
@@ -50,7 +54,7 @@ public class Server extends Thread{
 
                 // Send generated id to the client
                 send(id, "00:" + id + ":00");
-
+                numOfPlayers += 1;
                 while (receiver.hasNextLine()) {
                     String packet = receiver.nextLine();
                     String[] code = packet.split(":");
@@ -69,7 +73,32 @@ public class Server extends Thread{
                         // START/COUNT PACKET
                         case "01":
                             if (playerId.matches("01")) {
-                                // TODO: Insert code here for generating/randomizing cards and distributing them to clients
+                               //Randomly choose which types of card will be given
+                                ArrayList<String> randomCards = new ArrayList<String>();
+                                for(int i = 0; randomCards.size() < numOfPlayers; i++){
+                                    Random rand = new Random();
+                                    int randomIndex = rand.nextInt(13);
+                                    if(!(randomCards.contains(cardArray[randomIndex]))) randomCards.add(cardArray[randomIndex]);
+                                }
+                                //Create deck of cards with randomly chosen ranks and their 4 suits
+                                ArrayList<String> deckOfCards = new ArrayList<String>();
+                                for(int i = 0; i < randomCards.size(); i++){
+                                    for(int j = 0; j < 4; j++){
+                                        deckOfCards.add(randomCards.get(i) + suitsArray[j]);
+                                    }
+                                }
+                                Collections.shuffle(deckOfCards);
+
+                                //send shuffled cards to each player
+                                senders.forEach((key, value) -> {
+                                    ArrayList<String> listOfCards = new ArrayList<String>();
+                                    for(int i = 0; i < 4; i++) {
+                                        send(key,("00:" + key +":"+ deckOfCards.get(deckOfCards.size()-1)));
+                                        listOfCards.add(deckOfCards.get(deckOfCards.size()-1));
+                                        deckOfCards.remove(deckOfCards.size()-1);
+                                    }hands.put(key, listOfCards);
+                                });
+                                System.out.println(hands);
 
                                 this.broadcast("01:00:04");
                                 System.out.println("Starting game...");

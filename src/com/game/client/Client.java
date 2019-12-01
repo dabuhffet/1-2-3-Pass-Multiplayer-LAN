@@ -13,7 +13,7 @@ import java.util.Scanner;
 public class Client extends Thread {
     private boolean isConnected = false;
     private int queuedCard = 1;
-    private ArrayList<String> cards;
+    private ArrayList<String> cards = new ArrayList<String>();
     private String playerId = "";
     private PrintWriter sender;
     private Scanner receiver;
@@ -89,10 +89,12 @@ public class Client extends Thread {
         card1Layout.setHorizontalGroup(
                 card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 101, Short.MAX_VALUE)
+                        .addComponent(card1Label)
         );
         card1Layout.setVerticalGroup(
                 card1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 155, Short.MAX_VALUE)
+                        .addComponent(card1Label)
         );
 
         card3.setBackground(new java.awt.Color(255, 255, 255));
@@ -102,10 +104,12 @@ public class Client extends Thread {
         card3Layout.setHorizontalGroup(
                 card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 101, Short.MAX_VALUE)
+                        .addComponent(card3Label)
         );
         card3Layout.setVerticalGroup(
                 card3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 155, Short.MAX_VALUE)
+                        .addComponent(card3Label)
         );
 
         card4.setBackground(new java.awt.Color(255, 255, 255));
@@ -115,10 +119,12 @@ public class Client extends Thread {
         card4Layout.setHorizontalGroup(
                 card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 101, Short.MAX_VALUE)
+                        .addComponent(card4Label)
         );
         card4Layout.setVerticalGroup(
                 card4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 155, Short.MAX_VALUE)
+                        .addComponent(card4Label)
         );
 
         card2.setBackground(new java.awt.Color(255, 255, 255));
@@ -128,10 +134,12 @@ public class Client extends Thread {
         card2Layout.setHorizontalGroup(
                 card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 101, Short.MAX_VALUE)
+                        .addComponent(card2Label)
         );
         card2Layout.setVerticalGroup(
                 card2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGap(0, 155, Short.MAX_VALUE)
+                        .addComponent(card2Label)
         );
 
         playerNameText.setFont(new java.awt.Font("Consolas", 1, 18)); // NOI18N
@@ -324,9 +332,25 @@ public class Client extends Thread {
                         if (this.playerId.length() > 0) {
                             System.out.println("Card received... [" + cardCode + "]");
                             cards.add(cardCode);
-                            cards.get(cards.size() - 1);
+                            //Set card labels
+                            if(cards.size() == 1){
+                                card1Label.setText(cardCode);
+                                card1Label.setFont(new Font("Consolas", 0, 20));
+                                if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card1Label.setForeground(new java.awt.Color(255, 0, 0));
+                            }else if(cards.size() == 2){
+                                card2Label.setText(cardCode);
+                                card2Label.setFont(new Font("Consolas", 0, 20));
+                                if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card2Label.setForeground(new java.awt.Color(255, 0, 0));
+                            }else if(cards.size() == 3){
+                                card3Label.setText(cardCode);
+                                card3Label.setFont(new Font("Consolas", 0, 20));
+                                if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card3Label.setForeground(new java.awt.Color(255, 0, 0));
+                            }else if(cards.size() == 4){
+                                card4Label.setText(cardCode);
+                                card4Label.setFont(new Font("Consolas", 0, 20));
+                                if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card4Label.setForeground(new java.awt.Color(255, 0, 0));
+                            }
 
-                            // TODO: Set labels for the cards
                         }
                         else {
                             // Initialize player information
@@ -414,4 +438,8 @@ public class Client extends Thread {
     private JLabel playerNameText = new JLabel();
     private JTextField portNumber = new JTextField();
     private JTextField serverIp = new JTextField();
+    private JLabel card1Label = new JLabel();
+    private JLabel card2Label = new JLabel();
+    private JLabel card3Label = new JLabel();
+    private JLabel card4Label = new JLabel();
 }
