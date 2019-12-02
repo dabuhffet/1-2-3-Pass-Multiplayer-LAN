@@ -335,19 +335,19 @@ public class Client extends Thread {
                             //Set card labels
                             if(cards.size() == 1){
                                 card1Label.setText(cardCode);
-                                card1Label.setFont(new Font("Consolas", 0, 20));
+                                card1Label.setFont(new Font("Consolas", 0, 60));
                                 if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card1Label.setForeground(new java.awt.Color(255, 0, 0));
                             }else if(cards.size() == 2){
                                 card2Label.setText(cardCode);
-                                card2Label.setFont(new Font("Consolas", 0, 20));
+                                card2Label.setFont(new Font("Consolas", 0, 60));
                                 if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card2Label.setForeground(new java.awt.Color(255, 0, 0));
                             }else if(cards.size() == 3){
                                 card3Label.setText(cardCode);
-                                card3Label.setFont(new Font("Consolas", 0, 20));
+                                card3Label.setFont(new Font("Consolas", 0, 60));
                                 if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card3Label.setForeground(new java.awt.Color(255, 0, 0));
                             }else if(cards.size() == 4){
                                 card4Label.setText(cardCode);
-                                card4Label.setFont(new Font("Consolas", 0, 20));
+                                card4Label.setFont(new Font("Consolas", 0, 60));
                                 if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card4Label.setForeground(new java.awt.Color(255, 0, 0));
                             }
 
