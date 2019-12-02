@@ -128,6 +128,15 @@ public class Server extends Thread{
 
                 System.out.println(hands);
 
+                //will check if the cards in in the playerId's hands are matching, every match +1 to the flag
+                ArrayList<String> listOfCards = hands.get(playerId);
+                Integer matchCount = 0;
+                for(int i = 0; i < 4; i++) {
+                    if(listOfCards.get(i).startsWith(cardCode.substring(0,1))) matchCount++;
+                }
+                //if flag = 4 will send to player that all 4 matched
+                if (matchCount== 4) send(playerId,"03:"+playerId+":00");
+
                 for (int i = 1; i <= 3; i++) {
                     broadcast("01:00:0" + i);
                   //  System.out.println("Counting... " + i);

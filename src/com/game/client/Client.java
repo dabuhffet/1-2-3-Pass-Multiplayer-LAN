@@ -431,7 +431,8 @@ public class Client extends Thread {
 
                     // CARDS MATCHED PACKET
                     case "03" :
-
+                        this.passingCardText.setText("        COMPLETED       ");
+                        
                         break;
                 }
             }
