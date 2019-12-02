@@ -5,9 +5,12 @@ import java.awt.*;
 import java.awt.List;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+
+import static java.lang.Integer.parseInt;
 
 public class Server extends Thread{
 
@@ -18,6 +21,7 @@ public class Server extends Thread{
     private static String cardArray[] = {"A","2","3","4","5","6","7","8","9","0","J","Q","K"};
     private static String suitsArray[] = {"D","H","S","C"};
     private static int numOfPlayers;
+
 
     public Server (int port) throws IOException {
         this.serverSocket = new ServerSocket(port);
@@ -82,13 +86,14 @@ public class Server extends Thread{
                     broadcast("01:00:04");
                     System.out.println("Starting game...");
 
-                    for (int i = 3; i > 0; i--) {
+                    for (int i = 1; i <= 3; i++) {
                         broadcast("01:00:0" + i);
                         System.out.println("Counting... " + i);
                         Thread.sleep(1000);
                     }
                     broadcast("01:00:00");
                     System.out.println("Pass...");
+                    Thread.sleep(2000);
 
                     // TODO: Insert here handling end game passing
                 }
@@ -96,6 +101,41 @@ public class Server extends Thread{
 
             // PASS PACKET
             case "02":
+                int playerPosition = parseInt(playerId);
+                //System.out.println(playerPosition);
+                String passToId = "";
+                //find person to your right
+                if(playerPosition < numOfPlayers){
+                    if(playerPosition < 10) passToId = "0"+String.valueOf(playerPosition+1);
+                    else passToId = String.valueOf(playerPosition+1);
+                }else{
+                    passToId = "01";
+                }
+               send(passToId, ("02:"+playerId+":"+cardCode));
+                //System.out.print("02:"+playerId+":"+cardCode);
+                //passing card to person to the right will make one of your slots empty
+                ArrayList<String> newHand = hands.get(playerId);
+                for(int i = 0; i < 4; i++){
+                    if(newHand.get(i).equals(cardCode)) newHand.set(i,"00");
+                }
+                hands.replace(playerId, newHand);
+                //edit the hand of the person to the right
+                ArrayList<String> newPassHand = hands.get(passToId);
+                for(int i = 0; i < 4; i++){
+                    if((newPassHand.get(i)).equals("00")) newPassHand.set(i,cardCode);
+                }
+                hands.replace(passToId, newPassHand);
+
+                System.out.println(hands);
+
+                for (int i = 1; i <= 3; i++) {
+                    broadcast("01:00:0" + i);
+                  //  System.out.println("Counting... " + i);
+                    Thread.sleep(1500);
+                }
+                broadcast("01:00:00");
+                //System.out.println("Pass...");
+                Thread.sleep(2000);
 
                 break;
 
@@ -132,78 +172,7 @@ public class Server extends Thread{
 
                 new Thread(new Handler(client)).start();
 
-                /*
-                while (receiver.hasNextLine()) {
-                    String packet = receiver.nextLine();
-                    String[] code = packet.split(":");
 
-                    String packetType = code[0];
-                    String playerId = code[1];
-                    String cardCode = code[2];
-
-                    System.out.println("CODE: " + packetType + "-" + playerId + "-" + cardCode);
-
-                    switch (packetType) {
-                        // READY PACKET
-                        case "00" :
-                            break;
-
-                        // START/COUNT PACKET
-                        case "01":
-                            if (playerId.matches("01")) {
-                               //Randomly choose which types of card will be given
-                                ArrayList<String> randomCards = new ArrayList<String>();
-                                for(int i = 0; randomCards.size() < numOfPlayers; i++){
-                                    Random rand = new Random();
-                                    int randomIndex = rand.nextInt(13);
-                                    if(!(randomCards.contains(cardArray[randomIndex]))) randomCards.add(cardArray[randomIndex]);
-                                }
-                                //Create deck of cards with randomly chosen ranks and their 4 suits
-                                ArrayList<String> deckOfCards = new ArrayList<String>();
-                                for(int i = 0; i < randomCards.size(); i++){
-                                    for(int j = 0; j < 4; j++){
-                                        deckOfCards.add(randomCards.get(i) + suitsArray[j]);
-                                    }
-                                }
-                                Collections.shuffle(deckOfCards);
-
-                                //send shuffled cards to each player
-                                senders.forEach((key, value) -> {
-                                    ArrayList<String> listOfCards = new ArrayList<String>();
-                                    for(int i = 0; i < 4; i++) {
-                                        send(key,("00:" + key +":"+ deckOfCards.get(deckOfCards.size()-1)));
-                                        listOfCards.add(deckOfCards.get(deckOfCards.size()-1));
-                                        deckOfCards.remove(deckOfCards.size()-1);
-                                    }hands.put(key, listOfCards);
-                                });
-                                System.out.println(hands);
-
-                                this.broadcast("01:00:04");
-                                System.out.println("Starting game...");
-
-                                for (int i = 3; i > 0; i--) {
-                                    this.broadcast("01:00:0" + i);
-                                    System.out.println("Counting... " + i);
-                                    Thread.sleep(1000);
-                                }
-                                this.broadcast("01:00:00");
-                                System.out.println("Pass...");
-
-                                // TODO: Insert here handling end game passing
-                            }
-                            break;
-
-                        // PASS PACKET
-                        case "02":
-
-                            break;
-
-                        // CARDS MATCHED PACKET
-                        case "03":
-
-                            break;
-                    }
-                }*/
             } catch (Exception e) {
                 System.out.println(e);
             }
@@ -227,7 +196,7 @@ public class Server extends Thread{
 
             JOptionPane.showMessageDialog(frame, panel, "Connection Information", JOptionPane.OK_CANCEL_OPTION);
 
-            Thread t = new Server(Integer.parseInt(serverIp.getText()));
+            Thread t = new Server(parseInt(serverIp.getText()));
             t.start();
         }
         catch (IOException e) {

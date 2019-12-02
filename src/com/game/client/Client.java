@@ -380,6 +380,7 @@ public class Client extends Thread {
                             this.passingCardText.setText("        PASS!       ");
                             // TODO: Insert pass code here.
                             // sender.println("02:" + this.playerId + ":" + cards[queuedCard]);
+                            this.sender.println("02:"+this.playerId+":"+cards.get(queuedCard - 1));
                         }
                         else if (cardCode.matches("01")) {
                             this.passingCardText.setText("          1         ");
@@ -400,7 +401,32 @@ public class Client extends Thread {
 
                     // PASS PACKET
                     case "02" :
-
+                        //replace chosen queuedcard with new card
+                        if(queuedCard == 1){
+                            cards.set(0, cardCode);
+                            card1Label.setText(cardCode);
+                            card1Label.setFont(new Font("Consolas", 0, 60));
+                            if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card1Label.setForeground(new java.awt.Color(255, 0, 0));
+                            else card1Label.setForeground(new java.awt.Color(0, 0, 0));
+                        }else if(queuedCard == 2){
+                            cards.set(1, cardCode);
+                            card2Label.setText(cardCode);
+                            card2Label.setFont(new Font("Consolas", 0, 60));
+                            if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card2Label.setForeground(new java.awt.Color(255, 0, 0));
+                            else card2Label.setForeground(new java.awt.Color(0, 0, 0));
+                        }else if (queuedCard == 3){
+                            cards.set(2, cardCode);
+                            card3Label.setText(cardCode);
+                            card3Label.setFont(new Font("Consolas", 0, 60));
+                            if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card3Label.setForeground(new java.awt.Color(255, 0, 0));
+                            else card3Label.setForeground(new java.awt.Color(0, 0, 0));
+                        }else if(queuedCard == 4){
+                            cards.set(3, cardCode);
+                            card4Label.setText(cardCode);
+                            card4Label.setFont(new Font("Consolas", 0, 60));
+                            if(cardCode.substring(1).equals("H") || cardCode.substring(1).equals("D"))card4Label.setForeground(new java.awt.Color(255, 0, 0));
+                            else card4Label.setForeground(new java.awt.Color(0, 0, 0));
+                        }
                         break;
 
                     // CARDS MATCHED PACKET
