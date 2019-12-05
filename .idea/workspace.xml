@@ -4,7 +4,6 @@
     <list default="true" id="51cf94ec-257e-4bda-9f7d-5cb227deaacc" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/game/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/game/client/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/com/game/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/game/server/Server.java" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -118,9 +117,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Test" />
         <item itemvalue="Application.Client" />
         <item itemvalue="Application.Server" />
+        <item itemvalue="Application.Test" />
         <item itemvalue="Application.Test2" />
       </list>
     </recent_temporary>
