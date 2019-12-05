@@ -21,7 +21,9 @@ public class Server extends Thread{
     private static String cardArray[] = {"A","2","3","4","5","6","7","8","9","0","J","Q","K"};
     private static String suitsArray[] = {"D","H","S","C"};
     private static int numOfPlayers;
-    private static ArrayList<String> rankings = new ArrayList<String>();
+    private static Hashtable<String, String> cardFromLeft = new Hashtable<>();
+    private static boolean cardFromLeftComplete;
+    private static int finishedCounter;
 
 
     public Server (int port) throws IOException {
@@ -103,11 +105,11 @@ public class Server extends Thread{
         String playerId = code[1];
         String cardCode = code[2];
 
-        System.out.println("CODE: " + packetType + "-" + playerId + "-" + cardCode);
+//        System.out.println("CODE: " + packetType + "-" + playerId + "-" + cardCode);
 
         switch (packetType) {
             // READY PACKET
-            case "00" :
+            case "00":
                 break;
 
             // START/COUNT PACKET
@@ -115,15 +117,15 @@ public class Server extends Thread{
                 if (playerId.matches("01")) {
                     //Randomly choose which types of card will be given
                     ArrayList<String> randomCards = new ArrayList<String>();
-                    for(int i = 0; randomCards.size() < numOfPlayers; i++){
+                    for (int i = 0; randomCards.size() < numOfPlayers; i++) {
                         Random rand = new Random();
                         int randomIndex = rand.nextInt(13);
-                        if(!(randomCards.contains(cardArray[randomIndex]))) randomCards.add(cardArray[randomIndex]);
+                        if (!(randomCards.contains(cardArray[randomIndex]))) randomCards.add(cardArray[randomIndex]);
                     }
                     //Create deck of cards with randomly chosen ranks and their 4 suits
                     ArrayList<String> deckOfCards = new ArrayList<String>();
-                    for(int i = 0; i < randomCards.size(); i++){
-                        for(int j = 0; j < 4; j++){
+                    for (int i = 0; i < randomCards.size(); i++) {
+                        for (int j = 0; j < 4; j++) {
                             deckOfCards.add(randomCards.get(i) + suitsArray[j]);
                         }
                     }
@@ -132,21 +134,20 @@ public class Server extends Thread{
                     //send shuffled cards to each player
                     senders.forEach((key, value) -> {
                         ArrayList<String> listOfCards = new ArrayList<String>();
-                        for(int i = 0; i < 4; i++) {
-                            send(key,("00:" + key +":"+ deckOfCards.get(deckOfCards.size()-1)));
-                            listOfCards.add(deckOfCards.get(deckOfCards.size()-1));
-                            deckOfCards.remove(deckOfCards.size()-1);
+                        for (int i = 0; i < 4; i++) {
+                            send(key, ("00:" + key + ":" + deckOfCards.get(deckOfCards.size() - 1)));
+                            listOfCards.add(deckOfCards.get(deckOfCards.size() - 1));
+                            deckOfCards.remove(deckOfCards.size() - 1);
                         }
                         hands.put(key, listOfCards);
                     });
+                    System.out.println("Initial hands: ");
                     System.out.println(hands);
 
                     broadcast("01:00:04");
                     System.out.println("Starting game...");
 
                     count();
-
-                    // TODO: Insert here handling end game passing
                 }
                 break;
 
@@ -160,29 +161,51 @@ public class Server extends Thread{
 
                 String passToId = "";
                 //find person to your right
-                if(playerPosition < numOfPlayers){
-                    if(playerPosition < 10) passToId = "0"+String.valueOf(playerPosition+1);
-                    else passToId = String.valueOf(playerPosition+1);
-                }
-                else{
+                if (playerPosition < numOfPlayers) {
+
+                    if (playerPosition < 10) {
+                        String wew = String.valueOf((playerPosition+1));
+                        passToId = "0" + String.valueOf(wew);
+                    }
+                    else passToId = String.valueOf(playerPosition + 1);
+                } else {
                     passToId = "01";
                 }
-                send(passToId, ("02:" + playerId+":" + cardCode));
-                //System.out.print("02:"+playerId+":"+cardCode);
-                //passing card to person to the right will make one of your slots empty
-                ArrayList<String> newHand = hands.get(playerId);
-                for(int i = 0; i < 4; i++){
-                    if(newHand.get(i).equals(cardCode)) newHand.set(i,"00");
-                }
-                hands.replace(playerId, newHand);
-                //edit the hand of the person to the right
-                ArrayList<String> newPassHand = hands.get(passToId);
-                for(int i = 0; i < 4; i++){
-                    if((newPassHand.get(i)).equals("00")) newPassHand.set(i,cardCode);
-                }
-                hands.replace(passToId, newPassHand);
+                //save passed card
+                cardFromLeft.replace(passToId, cardCode);
+                //set flag if all cards have been obtained by server
+                if (cardFromLeft.containsValue("")) cardFromLeftComplete = false;
+                else cardFromLeftComplete = true;
+                //update hands if and only if server has collected all cards to be passed
+                if (cardFromLeftComplete) {
+                    hands.forEach((key, value) -> {
+                        ArrayList<String> newHand = hands.get(key);
+                        int position = Integer.parseInt(key);
+                        for (int i = 0; i < 4; i++) {
+                            String personToRight = "";
+                            if(position < numOfPlayers){
+                                if (position < 10) {
+                                    String wew = String.valueOf((position+1));
+                                    personToRight = "0" + wew;
+                                }
+                                else personToRight = String.valueOf(i + 1);
+                            }else{
+                                personToRight = "01";
+                            }
+                            if (newHand.get(i).equals(cardFromLeft.get(personToRight))) newHand.set(i, cardFromLeft.get(key));
+                        }
+                        hands.replace(key, newHand);
 
-                System.out.println(hands);
+
+                    });
+                    senders.forEach((key, value) -> {
+                        value.println("02:"+key+":"+cardFromLeft.get(key));
+                        cardFromLeft.replace(key,"");
+                    });
+                    cardFromLeftComplete = false;
+                    System.out.println("New hands:");
+                    System.out.println(hands);
+                }
 
                 //will check if the cards in the playerId's hands are matching, every match +1 to the flag
                 ArrayList<String> listOfCards = hands.get(playerId);
@@ -212,18 +235,16 @@ public class Server extends Thread{
 
             // CARDS MATCHED PACKET
             case "03":
-                rankings.add(playerId);
 
-                if (rankings.size() == senders.size()) {
-                    System.out.println("Rankings:" + rankings);
-
-                    for (int i = 0; i < rankings.size(); i++) {
-                        // Send rankings to clients
-                        String pt = "03:" + rankings.get(i) + ":" + String.format("%02d", (i + 1));
-                        send(rankings.get(i), pt);
-                    }
-                    //TODO: Send to clients if they won or not
+                finishedCounter += 1;
+                String pt = "";
+                if(finishedCounter < 10) {
+                    pt = "03:" + playerId +":0"+ String.valueOf(finishedCounter);
+                }else {
+                    pt = "03:"+playerId + ":" + String.valueOf(finishedCounter);
                 }
+                send(playerId,pt);
+                if(finishedCounter + 1 == numOfPlayers) System.exit(0);
                 break;
         }
     }
@@ -245,10 +266,10 @@ public class Server extends Thread{
                 // Add sender of client to the pool of sender with its id as the key.
                 //      This is used to track the clients connected to the server.
                 senders.put(id, sender);
-
+                cardFromLeft.put(id, "");
                 // Initialize sync variable for thread syncing.
                 sync.put(id, false);
-
+                this.cardFromLeftComplete = false;
                 // Send generated id to the client
                 send(id, "00:" + id + ":00");
                 numOfPlayers += 1;

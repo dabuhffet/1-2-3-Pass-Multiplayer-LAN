@@ -26,7 +26,7 @@ public class Client extends Thread {
         frame.setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         frame.setTitle("1-2-3 Pass!");
         frame.setBackground(new Color(10, 10, 10));
-        frame.setPreferredSize(new Dimension(800,490));
+        frame.setPreferredSize(new Dimension(600,490));
         frame.setResizable(false);
 
         jLayeredPane1.setBackground(new Color(30, 40, 47));
@@ -34,30 +34,9 @@ public class Client extends Thread {
 
         gamePanel.setBackground(new Color(10, 10, 10));
 
-        leaderboardPanel.setBorder(new LineBorder(new Color(255,255,255), 2));
-        leaderboardPanel.setBackground(new java.awt.Color(10, 10, 10));
-        leaderboardPanel.setBorder(new LineBorder(new Color(255,255,255), 2));
-
         jLabel4.setText("LEADERBOARD");
         jLabel4.setFont(new Font("Consolas", 0, 20));
         jLabel4.setForeground(new java.awt.Color(255, 255, 255));
-
-        javax.swing.GroupLayout leaderboardPanelLayout = new javax.swing.GroupLayout(leaderboardPanel);
-        leaderboardPanel.setLayout(leaderboardPanelLayout);
-        leaderboardPanelLayout.setHorizontalGroup(
-                leaderboardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(leaderboardPanelLayout.createSequentialGroup()
-                                .addGap(20, 20, 20)
-                                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 127, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addContainerGap(19, Short.MAX_VALUE))
-        );
-        leaderboardPanelLayout.setVerticalGroup(
-                leaderboardPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(leaderboardPanelLayout.createSequentialGroup()
-                                .addContainerGap()
-                                .addComponent(jLabel4)
-                                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-        );
         passPanel.setBackground(new Color(10, 10, 10));
         passPanel.setBorder(BorderFactory.createLineBorder(new Color(255, 255, 255),3));
         passingCardText.setBackground(new Color(255, 255, 255));
@@ -167,12 +146,10 @@ public class Client extends Thread {
                                         .addGroup(gamePanelLayout.createSequentialGroup()
                                                 .addContainerGap()
                                                 .addComponent(playerNameText)))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE)
-                                .addComponent(leaderboardPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 54, Short.MAX_VALUE))
         );
         gamePanelLayout.setVerticalGroup(
                 gamePanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(leaderboardPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addGroup(gamePanelLayout.createSequentialGroup()
                                 .addGap(21, 21, 21)
                                 .addComponent(passPanel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -260,27 +237,35 @@ public class Client extends Thread {
     }
 
     private void card4Clicked(MouseEvent evt) {
-        this.queuedCard = 4;
-        this.removeCardBorder();
-        this.setBorder(card4);
+        if(!(this.passingCardText.getText().equals("   PASS!   "))){
+            this.queuedCard = 4;
+            this.removeCardBorder();
+            this.setBorder(card4);
+        }
     }
 
     private void card3Clicked(MouseEvent evt) {
-        this.queuedCard = 3;
-        this.removeCardBorder();
-        this.setBorder(card3);
+        if(!(this.passingCardText.getText().equals("   PASS!   "))) {
+            this.queuedCard = 3;
+            this.removeCardBorder();
+            this.setBorder(card3);
+        }
     }
 
     private void card2Clicked(MouseEvent evt) {
-        this.queuedCard = 2;
-        this.removeCardBorder();
-        this.setBorder(card2);
+        if(!(this.passingCardText.getText().equals("   PASS!   "))) {
+            this.queuedCard = 2;
+            this.removeCardBorder();
+            this.setBorder(card2);
+        }
     }
 
     private void card1Clicked(MouseEvent evt) {
-        this.queuedCard = 1;
-        this.removeCardBorder();
-        this.setBorder(card1);
+        if(!(this.passingCardText.getText().equals("   PASS!   "))) {
+            this.queuedCard = 1;
+            this.removeCardBorder();
+            this.setBorder(card1);
+        }
     }
 
     public void run() {
@@ -305,6 +290,7 @@ public class Client extends Thread {
 
         String ip = serverIp.getText();
         int port = Integer.parseInt(serverPort.getText());
+
 
         try (Socket socket = new Socket(ip, port)) {
 
@@ -447,10 +433,24 @@ public class Client extends Thread {
                             sender.println("03:" + this.playerId + ":00");
                         }
                         else {
+                            if(cardCode.equals("00"))JOptionPane.showMessageDialog(frame, "You've won 1st place!!");
+                            else if(cardCode.equals("01"))JOptionPane.showMessageDialog(frame, "You got 2nd place.");
+                            else if(cardCode.equals("02"))JOptionPane.showMessageDialog(frame, "You got 3rd place.");
+                            else if(cardCode.equals("03"))JOptionPane.showMessageDialog(frame, "You got 4th place.");
+                            else if(cardCode.equals("04"))JOptionPane.showMessageDialog(frame, "You got 5th place.");
+                            else if(cardCode.equals("05"))JOptionPane.showMessageDialog(frame, "You got 6th place.");
+                            else if(cardCode.equals("06"))JOptionPane.showMessageDialog(frame, "You got 7th place.");
+                            else if(cardCode.equals("07"))JOptionPane.showMessageDialog(frame, "You got 8th place.");
+                            else if(cardCode.equals("08"))JOptionPane.showMessageDialog(frame, "You got 9th place.");
+                            else if(cardCode.equals("09"))JOptionPane.showMessageDialog(frame, "You got 10th place.");
+                            else if(cardCode.equals("10"))JOptionPane.showMessageDialog(frame, "You got 11th place.");
+                            else if(cardCode.equals("11"))JOptionPane.showMessageDialog(frame, "You got 12th place.");
+                            else if(cardCode.equals("12"))JOptionPane.showMessageDialog(frame, "You got 13th place.");
                             System.out.println("Place: " + cardCode);
+                            System.exit(0);
                         }
 
-                        this.sender.println("03:" + playerId + ":00");
+//                        this.sender.println("03:" + playerId + ":00");
                         break;
                 }
             }
@@ -477,7 +477,6 @@ public class Client extends Thread {
     private JPanel gamePanel = new JPanel();
     private JLabel jLabel4 = new JLabel();
     private JLayeredPane jLayeredPane1 = new JLayeredPane();
-    private JPanel leaderboardPanel = new JPanel();
     private JPanel passPanel = new JPanel();
     private JLabel passingCardText = new JLabel();
     private JLabel playerNameText = new JLabel();

@@ -6,7 +6,6 @@
       <change beforePath="$PROJECT_DIR$/src/com/game/client/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/game/client/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/com/game/server/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/com/game/server/Server.java" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -29,24 +28,13 @@
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
-  <component name="RunManager" selected="Application.Test2">
+  <component name="RunManager" selected="Application.Client">
     <configuration name="Client" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.game.client.Client" />
       <module name="CMSC137-PROJECT" />
@@ -118,12 +106,24 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Application.Test2" />
         <item itemvalue="Application.Test" />
         <item itemvalue="Application.Client" />
+        <item itemvalue="Application.Test2" />
         <item itemvalue="Application.Server" />
       </list>
     </recent_temporary>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -136,6 +136,7 @@
       <option name="presentableId" value="Default" />
       <updated>1575087161299</updated>
       <workItem from="1575262815337" duration="10429000" />
+      <workItem from="1575556891114" duration="15748000" />
     </task>
     <servers />
   </component>
@@ -156,21 +157,25 @@
     </option>
   </component>
   <component name="WindowStateProjectService">
-    <state width="1253" height="175" key="GridCell.Tab.0.bottom" timestamp="1575272760813">
+    <state width="1253" height="175" key="GridCell.Tab.0.bottom" timestamp="1575573005922">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="175" key="GridCell.Tab.0.bottom/67.27.1299.741@67.27.1299.741" timestamp="1575272760813" />
-    <state width="1253" height="175" key="GridCell.Tab.0.center" timestamp="1575272760811">
+    <state width="1253" height="175" key="GridCell.Tab.0.bottom/67.27.1299.741@67.27.1299.741" timestamp="1575573005922" />
+    <state width="1253" height="175" key="GridCell.Tab.0.center" timestamp="1575573005921">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="175" key="GridCell.Tab.0.center/67.27.1299.741@67.27.1299.741" timestamp="1575272760811" />
-    <state width="1253" height="175" key="GridCell.Tab.0.left" timestamp="1575272760810">
+    <state width="1253" height="175" key="GridCell.Tab.0.center/67.27.1299.741@67.27.1299.741" timestamp="1575573005921" />
+    <state width="1253" height="175" key="GridCell.Tab.0.left" timestamp="1575573005921">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="175" key="GridCell.Tab.0.left/67.27.1299.741@67.27.1299.741" timestamp="1575272760810" />
-    <state width="1253" height="175" key="GridCell.Tab.0.right" timestamp="1575272760812">
+    <state width="1253" height="175" key="GridCell.Tab.0.left/67.27.1299.741@67.27.1299.741" timestamp="1575573005921" />
+    <state width="1253" height="175" key="GridCell.Tab.0.right" timestamp="1575573005922">
       <screen x="67" y="27" width="1299" height="741" />
     </state>
-    <state width="1253" height="175" key="GridCell.Tab.0.right/67.27.1299.741@67.27.1299.741" timestamp="1575272760812" />
+    <state width="1253" height="175" key="GridCell.Tab.0.right/67.27.1299.741@67.27.1299.741" timestamp="1575573005922" />
+    <state x="379" y="89" width="672" height="678" key="search.everywhere.popup" timestamp="1575572820706">
+      <screen x="67" y="27" width="1299" height="741" />
+    </state>
+    <state x="379" y="89" width="672" height="678" key="search.everywhere.popup/67.27.1299.741@67.27.1299.741" timestamp="1575572820706" />
   </component>
 </project>
