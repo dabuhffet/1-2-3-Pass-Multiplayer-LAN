@@ -377,21 +377,27 @@ public class Client extends Thread {
                     // START/COUNT PACKET
                     case "01" :
                         if (cardCode.matches("00")) {
+                            System.out.println("PASS!");
                             this.passingCardText.setText("        PASS!       ");
                             // TODO: Insert pass code here.
                             // sender.println("02:" + this.playerId + ":" + cards[queuedCard]);
-                            this.sender.println("02:"+this.playerId+":"+cards.get(queuedCard - 1));
+                            String pt = "02:" + this.playerId + ":" + cards.get(queuedCard - 1);
+                            this.sender.println(pt);
                         }
                         else if (cardCode.matches("01")) {
+                            System.out.println("1");
                             this.passingCardText.setText("          1         ");
                         }
                         else if (cardCode.matches("02")) {
+                            System.out.println("2");
                             this.passingCardText.setText("          2         ");
                         }
                         else if (cardCode.matches("03")) {
+                            System.out.println("3");
                             this.passingCardText.setText("          3         ");
                         }
                         else if (cardCode.matches("04"))  {
+                            System.out.println("START");
                             this.passingCardText.setText("        START       ");
                         }
                         else {

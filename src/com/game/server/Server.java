@@ -2,13 +2,13 @@ package com.game.server;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.List;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.lang.reflect.Array;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Integer.parseInt;
 
@@ -16,8 +16,8 @@ public class Server extends Thread{
 
     private ServerSocket serverSocket;
     private static Hashtable <String, PrintWriter> senders;
-    private static Hashtable<String, ArrayList<String>> hands = new Hashtable<String, ArrayList<String>>();
-    private Scanner receiver;
+    private static Hashtable <String, Boolean> sync = new Hashtable<String, Boolean>();
+    private static Hashtable <String, ArrayList<String>> hands = new Hashtable<String, ArrayList<String>>();
     private static String cardArray[] = {"A","2","3","4","5","6","7","8","9","0","J","Q","K"};
     private static String suitsArray[] = {"D","H","S","C"};
     private static int numOfPlayers;
@@ -36,6 +36,45 @@ public class Server extends Thread{
 
     public static void send (String clientId, String message) {
         senders.get(clientId).println(message);
+    }
+
+    public static void count () throws InterruptedException {
+        resetSync();
+        for (int i = 1; i <= 3; i++) {
+            broadcast("01:00:0" + i);
+            System.out.println("Counting... " + i);
+            Thread.sleep(1000);
+        }
+        broadcast("01:00:00");
+        System.out.println("Pass...");
+        Thread.sleep(1000);
+
+        return;
+    }
+
+    public static void resetSync() {
+        // Reset sync variables
+
+        sync.forEach((key, value) -> {
+            sync.put(key, false);
+        });
+
+        System.out.println("Reset: " + sync);
+        return;
+    }
+
+    public static Boolean checkSync() {
+        AtomicBoolean allHasPassed = new AtomicBoolean(true);
+
+        System.out.println(sync);
+
+        sync.forEach((key, value) -> {
+            if (value == false) {
+                allHasPassed.set(false);
+            }
+        });
+
+        return allHasPassed.get();
     }
 
     public static void handle (String packet) throws InterruptedException {
@@ -86,14 +125,7 @@ public class Server extends Thread{
                     broadcast("01:00:04");
                     System.out.println("Starting game...");
 
-                    for (int i = 1; i <= 3; i++) {
-                        broadcast("01:00:0" + i);
-                        System.out.println("Counting... " + i);
-                        Thread.sleep(1000);
-                    }
-                    broadcast("01:00:00");
-                    System.out.println("Pass...");
-                    Thread.sleep(2000);
+                    count();
 
                     // TODO: Insert here handling end game passing
                 }
@@ -101,17 +133,22 @@ public class Server extends Thread{
 
             // PASS PACKET
             case "02":
+
+                // Set sync variable of playerId to true, signifying that the player has passed.
+                sync.put(playerId, true);
+
                 int playerPosition = parseInt(playerId);
-                //System.out.println(playerPosition);
+
                 String passToId = "";
                 //find person to your right
                 if(playerPosition < numOfPlayers){
                     if(playerPosition < 10) passToId = "0"+String.valueOf(playerPosition+1);
                     else passToId = String.valueOf(playerPosition+1);
-                }else{
+                }
+                else{
                     passToId = "01";
                 }
-               send(passToId, ("02:"+playerId+":"+cardCode));
+                send(passToId, ("02:" + playerId+":" + cardCode));
                 //System.out.print("02:"+playerId+":"+cardCode);
                 //passing card to person to the right will make one of your slots empty
                 ArrayList<String> newHand = hands.get(playerId);
@@ -128,23 +165,20 @@ public class Server extends Thread{
 
                 System.out.println(hands);
 
-                //will check if the cards in in the playerId's hands are matching, every match +1 to the flag
+                //will check if the cards in the playerId's hands are matching, every match +1 to the flag
                 ArrayList<String> listOfCards = hands.get(playerId);
                 Integer matchCount = 0;
                 for(int i = 0; i < 4; i++) {
                     if(listOfCards.get(i).startsWith(cardCode.substring(0,1))) matchCount++;
                 }
+
                 //if flag = 4 will send to player that all 4 matched
                 if (matchCount== 4) send(playerId,"03:"+playerId+":00");
 
-                for (int i = 1; i <= 3; i++) {
-                    broadcast("01:00:0" + i);
-                  //  System.out.println("Counting... " + i);
-                    Thread.sleep(1500);
+                // If all sync flags are all true, start counting again
+                if (checkSync()) {
+                    count();
                 }
-                broadcast("01:00:00");
-                //System.out.println("Pass...");
-                Thread.sleep(2000);
 
                 break;
 
@@ -164,8 +198,6 @@ public class Server extends Thread{
 
                 System.out.println("Just connected to " + client.getRemoteSocketAddress());
 
-                receiver = new Scanner(client.getInputStream());
-
                 PrintWriter sender = new PrintWriter(client.getOutputStream(), true);
 
                 // Generate ID of this client
@@ -175,12 +207,14 @@ public class Server extends Thread{
                 //      This is used to track the clients connected to the server.
                 senders.put(id, sender);
 
+                // Initialize sync variable for thread syncing.
+                sync.put(id, false);
+
                 // Send generated id to the client
                 send(id, "00:" + id + ":00");
                 numOfPlayers += 1;
 
-                new Thread(new Handler(client)).start();
-
+                new Handler(client).start();
 
             } catch (Exception e) {
                 System.out.println(e);
