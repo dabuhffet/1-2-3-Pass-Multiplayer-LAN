@@ -438,8 +438,19 @@ public class Client extends Thread {
 
                     // CARDS MATCHED PACKET
                     case "03" :
-                        this.passingCardText.setText("        COMPLETED       ");
-                        
+                        this.passingCardText.setText(" COMPLETED ");
+
+                        if (!playerId.matches(this.playerId)) {
+                            JOptionPane.showMessageDialog(frame, "Click okay to turn down cards");
+
+                            // Notify server of the click
+                            sender.println("03:" + this.playerId + ":00");
+                        }
+                        else {
+                            System.out.println("Place: " + cardCode);
+                        }
+
+                        this.sender.println("03:" + playerId + ":00");
                         break;
                 }
             }

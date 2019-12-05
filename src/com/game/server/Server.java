@@ -8,7 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static java.lang.Integer.parseInt;
 
@@ -21,6 +21,7 @@ public class Server extends Thread{
     private static String cardArray[] = {"A","2","3","4","5","6","7","8","9","0","J","Q","K"};
     private static String suitsArray[] = {"D","H","S","C"};
     private static int numOfPlayers;
+    private static ArrayList<String> rankings = new ArrayList<String>();
 
 
     public Server (int port) throws IOException {
@@ -59,14 +60,11 @@ public class Server extends Thread{
             sync.put(key, false);
         });
 
-        System.out.println("Reset: " + sync);
         return;
     }
 
     public static Boolean checkSync() {
         AtomicBoolean allHasPassed = new AtomicBoolean(true);
-
-        System.out.println(sync);
 
         sync.forEach((key, value) -> {
             if (value == false) {
@@ -75,6 +73,27 @@ public class Server extends Thread{
         });
 
         return allHasPassed.get();
+    }
+
+    public static String checkCards () {
+        AtomicReference<String> playerId = new AtomicReference<>("");
+
+        hands.forEach((id, hand) -> {
+            AtomicBoolean matched = new AtomicBoolean(true);
+            String suit = hand.get(0).substring(0,1);
+
+            hand.forEach((card) -> {
+                if (!card.contains(suit)) {
+                    matched.set(false);
+                }
+            });
+
+            if (matched.get()) {
+                playerId.set(id);
+            }
+        });
+
+        return playerId.get();
     }
 
     public static void handle (String packet) throws InterruptedException {
@@ -175,16 +194,36 @@ public class Server extends Thread{
                 //if flag = 4 will send to player that all 4 matched
                 if (matchCount== 4) send(playerId,"03:"+playerId+":00");
 
-                // If all sync flags are all true, start counting again
-                if (checkSync()) {
+                // Check if there is a winning player
+                String winningPlayer = checkCards();
+
+                // If all sync flags are all true and there is no winning player
+                //      start counting again
+                if (checkSync() && winningPlayer.length() == 0) {
                     count();
+                }
+
+                // If there is a winning player, notify clients.
+                if (winningPlayer.length() > 0) {
+                   broadcast("03:" + winningPlayer + ":00");
                 }
 
                 break;
 
             // CARDS MATCHED PACKET
             case "03":
+                rankings.add(playerId);
 
+                if (rankings.size() == senders.size()) {
+                    System.out.println("Rankings:" + rankings);
+
+                    for (int i = 0; i < rankings.size(); i++) {
+                        // Send rankings to clients
+                        String pt = "03:" + rankings.get(i) + ":" + String.format("%02d", (i + 1));
+                        send(rankings.get(i), pt);
+                    }
+                    //TODO: Send to clients if they won or not
+                }
                 break;
         }
     }
