@@ -269,7 +269,7 @@ public class Client extends Thread {
     }
 
     public void run() {
-        System.out.println("Server IP: " + serverIp.getText() + " Port #:" + portNumber.getText());
+//        System.out.println("Server IP: " + serverIp.getText() + " Port #:" + portNumber.getText());
 
         // Creates a Dialog Box to get the server ip and port
         JPanel panel = new JPanel(new BorderLayout(5, 5));
@@ -347,7 +347,9 @@ public class Client extends Thread {
                             // Set initial picked card
                             this.queuedCard = 1;
                             this.setBorder(card1);
-
+                            //show tutorial
+                            ImageIcon icon = new ImageIcon(getClass().getResource("../images/tutorial.png"));
+                            JOptionPane.showMessageDialog(frame, "","Tutorial",JOptionPane.PLAIN_MESSAGE, icon);
                             if (this.playerId.matches("01")) {
                                 JOptionPane.showMessageDialog(frame, "Would you like to start the game now?");
 
@@ -365,8 +367,6 @@ public class Client extends Thread {
                         if (cardCode.matches("00")) {
                             System.out.println("PASS!");
                             this.passingCardText.setText("   PASS!   ");
-                            // TODO: Insert pass code here.
-                            // sender.println("02:" + this.playerId + ":" + cards[queuedCard]);
                             String pt = "02:" + this.playerId + ":" + cards.get(queuedCard - 1);
                             this.sender.println(pt);
                         }
@@ -480,8 +480,6 @@ public class Client extends Thread {
     private JPanel passPanel = new JPanel();
     private JLabel passingCardText = new JLabel();
     private JLabel playerNameText = new JLabel();
-    private JTextField portNumber = new JTextField();
-    private JTextField serverIp = new JTextField();
     private JLabel card1Label = new JLabel();
     private JLabel card2Label = new JLabel();
     private JLabel card3Label = new JLabel();
