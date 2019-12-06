@@ -11,7 +11,7 @@
 
 **Programming Language:** *Java*
 
-**Integrated Development Environment (IDE):** *IntelliJ*
+**Integrated Development Environment (IDE):** *IntelliJ, Netbeans 11*
 
 **Github Repository:** https://github.com/jetabarro/CMSC137-PROJECT
 
