@@ -7,7 +7,6 @@
 ### Abarro, Jethro
 ### Samarista, Rainier
 ### Tapia, Orlando
-### Villanueva, Ezra
 
 **Programming Language:** *Java*
 
